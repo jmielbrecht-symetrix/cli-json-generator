@@ -1,15 +1,15 @@
-import { OpenAIChatApi } from 'llm-api';
+import { AnthropicChatAPi } from 'llm-api';
 import { completion } from 'zod-gpt';
 
-const openai = new OpenAIChatApi({ apiKey: 'YOUR_OPENAI_KEY' });
+const client = new AnthropicChatAPi({ apiKey: process.env.ANTHROPIC_KEY });
 
-const siteSchema = z.object({
-    name: z.string().describe('The name of the startup'),
-    description: z.string().describe('What does this startup do?'),
+const controlPanelSchema = z.object({
+    name: z.string().describe('The name of the panel'),
+    description: z.string().describe('Control panel descriptions'),
 });
 
-const response = await completion(openai, 'Generate a startup idea', {
-  schema: siteSchema,
+const response = await completion(client, 'Generate a startup idea', {
+  schema: controlPanelSchema,
 });
 
 // data will be typed as { name: string; description: string }
