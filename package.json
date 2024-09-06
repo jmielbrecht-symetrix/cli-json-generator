@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "dotenv": "^16.4.5",
     "zod-gpt": "^0.16.0"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
     "typescript": "^5.5.2"
   },
   "scripts": {
-    "start": "npx tsc && node index.js"
+    "start": "npx tsc && node ./index.js"
   }
 }

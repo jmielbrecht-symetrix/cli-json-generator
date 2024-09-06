@@ -2,12 +2,13 @@ import { AnthropicChatApi } from 'llm-api';
 import { z } from 'zod';
 import { completion } from 'zod-gpt';
 import process from 'process';
+import path from 'path';
 
-require('dotenv').config();
+const pathToEnv = path.join(process.cwd(), '.env');
+require('dotenv').config({path: pathToEnv, debug: process.env.DEBUG});
 
-const client = new AnthropicChatApi({ apiKey: process.env.ANTHROPIC_KEY });
+const client = new AnthropicChatApi({ apiKey: process.env.ANTHROPIC_KEY }, {model: 'claude-3-haiku-20240307' });
 
-console.log('key: ' + process.env.ANTHROPIC_KEY);
 const controlPanelSchema = z.object({
   name: z.string().describe('The name of the panel'),
   description: z.string().describe('Control panel descriptions'),
@@ -18,8 +19,10 @@ const controlPanelSchema = z.object({
           name: z.string().describe('The name of the control'),
           description: z.string().describe('Control descriptions'),
           type: z.string().describe('Control types'),
-          x: z.number().describe('The x position of the control'),
-          y: z.number().describe('The y position of the control'),
+          row: z.number().describe('The x coordinate of the control relative to the top left of the panel'),
+          rows: z.number().describe('The amount of rows that the control takes up (i.e. vertical space)'),
+          col: z.number().describe('The y coordinate of the control relative to the top left of the panel'),
+          cols: z.number().describe('The amount of columns that the control takes up (i.e. horizontal space)'),
       })
   )
 });
@@ -27,7 +30,7 @@ const controlPanelSchema = z.object({
 async function promptLLM(startingInput: string) {
   const response = await completion(
     client, 
-	startingInput, 
+	  startingInput,
     {
       schema: controlPanelSchema,
     }
